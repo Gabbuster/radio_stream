@@ -12,7 +12,7 @@ async function seedStations() {
   const stations = [
     // Italy
     { name: "RTL 102.5", url: "http://shoutcast.rtl.it:3010/stream/1/", icon: "📻", country: "Italy" },
-    { name: "RDS", url: "https://stream.rds.radio/audio/rds.stream_aac/playlist.m3u8", icon: "🎵", country: "Italy" },
+    { name: "RDS", url: "https://rds-ice-01.fluidstream.net/rds.mp3", icon: "🎵", country: "Italy" },
     { name: "Radio 105", url: "http://icecast.unitedradio.it/Radio105.mp3", icon: "🤪", country: "Italy" },
     { name: "Radio Monte Carlo", url: "https://icy.unitedradio.it/RMC.mp3", icon: "🍸", country: "Italy" },
     { name: "Radio Italia", url: "https://icy.unitedradio.it/RadioItalia.mp3", icon: "🇮🇹", country: "Italy" },
