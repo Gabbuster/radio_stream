@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CYBER RADIO STREAM</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff006e;
+            --neon-purple: #8b5cf6;
+            --neon-yellow: #ffbe0b;
+            --neon-green: #39ff14;
+            --bg-dark: #0a0118;
+            --bg-darker: #050008;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(3deg); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan); }
+            50% { box-shadow: 0 0 30px var(--neon-pink), 0 0 60px var(--neon-pink); }
+        }
+
+        @keyframes slide-in {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes rotate-gradient {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: scaleY(0.5); }
+            50% { transform: scaleY(1); }
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0118 0%, #1a0b2e 50%, #16213e 100%);
+            background-size: 400% 400%;
+            animation: gradient-shift 15s ease infinite;
+            color: #fff;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding-bottom: 180px;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated Background Orbs */
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.3;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::before {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--neon-cyan) 0%, transparent 70%);
+            top: -200px;
+            left: -200px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        body::after {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--neon-pink) 0%, transparent 70%);
+            bottom: -250px;
+            right: -250px;
+            animation: float 25s ease-in-out infinite reverse;
+        }
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.2;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--neon-purple);
+            top: 30%;
+            right: 10%;
+            animation: float 18s ease-in-out infinite;
+        }
+
+        .orb-2 {
+            width: 350px;
+            height: 350px;
+            background: var(--neon-yellow);
+            bottom: 20%;
+            left: 15%;
+            animation: float 22s ease-in-out infinite reverse;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 50px 20px 40px;
+            position: relative;
+            z-index: 10;
+            animation: slide-in 0.8s ease-out;
+        }
+
+        .logo-container {
+            display: inline-block;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-pink) 50%, var(--neon-purple) 100%);
+            background-size: 200% 200%;
+            animation: gradient-shift 3s ease infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            filter: drop-shadow(0 0 30px rgba(0, 243, 255, 0.5));
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            letter-spacing: 4px;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+
+        /* Sections */
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .sector {
+            margin-bottom: 60px;
+            animation: slide-in 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .sector:nth-child(1) { animation-delay: 0.1s; }
+        .sector:nth-child(2) { animation-delay: 0.2s; }
+        .sector:nth-child(3) { animation-delay: 0.3s; }
+        .sector:nth-child(4) { animation-delay: 0.4s; }
+
+        .sector-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 25px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sector-title::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--neon-cyan), var(--neon-pink));
+            animation: gradient-shift 2s ease infinite;
+        }
+
+        .sector-title .flag {
+            font-size: 2.5rem;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+        }
+
+        .sector-title .text {
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* Station Grid */
+        .sector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 20px;
+        }
+
+        /* Station Cards - Glassmorphism */
+        .station-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 140px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .station-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+        }
+
+        .station-card:hover::before {
+            left: 100%;
+        }
+
+        .station-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 15px 50px rgba(0, 243, 255, 0.3),
+                        0 0 30px rgba(0, 243, 255, 0.2);
+        }
+
+        .station-card:active {
+            transform: translateY(-4px) scale(0.98);
+        }
+
+        .station-card.active {
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.2), rgba(255, 0, 110, 0.2));
+            border: 2px solid var(--neon-cyan);
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.6),
+                        0 0 60px rgba(255, 0, 110, 0.4),
+                        inset 0 0 30px rgba(0, 243, 255, 0.1);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        .station-card.active .station-icon {
+            transform: scale(1.2) rotate(5deg);
+            filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.8));
+        }
+
+        .station-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .station-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            line-height: 1.3;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Player Bar - Glassmorphism */
+        #player-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 1, 24, 0.85);
+            backdrop-filter: blur(30px);
+            border-top: 2px solid var(--glass-border);
+            padding: 25px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+            z-index: 1000;
+            box-shadow: 0 -10px 50px rgba(0, 0, 0, 0.5);
+            animation: slide-in 1s ease-out 0.5s both;
+        }
+
+        .player-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow: hidden;
+        }
+
+        #now-playing {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 20px var(--neon-cyan);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            letter-spacing: 2px;
+        }
+
+        #player-status {
+            font-size: 0.9rem;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 300;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Visualizer */
+        .visualizer {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 40px;
+            margin-left: 20px;
+        }
+
+        .visualizer .bar {
+            width: 4px;
+            background: linear-gradient(180deg, var(--neon-cyan), var(--neon-pink));
+            border-radius: 2px;
+            animation: wave 0.8s ease-in-out infinite;
+            opacity: 0.6;
+        }
+
+        .visualizer .bar:nth-child(1) { animation-delay: 0s; height: 30%; }
+        .visualizer .bar:nth-child(2) { animation-delay: 0.1s; height: 50%; }
+        .visualizer .bar:nth-child(3) { animation-delay: 0.2s; height: 70%; }
+        .visualizer .bar:nth-child(4) { animation-delay: 0.3s; height: 40%; }
+        .visualizer .bar:nth-child(5) { animation-delay: 0.4s; height: 60%; }
+        .visualizer .bar:nth-child(6) { animation-delay: 0.5s; height: 80%; }
+        .visualizer .bar:nth-child(7) { animation-delay: 0.6s; height: 50%; }
+
+        .visualizer.playing .bar {
+            opacity: 1;
+        }
+
+        .visualizer.paused .bar {
+            animation: none;
+            opacity: 0.3;
+        }
+
+        /* Play Button */
+        .play-button-container {
+            position: relative;
+        }
+
+        #playBtn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
+            border: none;
+            color: white;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 30px rgba(0, 243, 255, 0.4);
+            position: relative;
+        }
+
+        #playBtn::before {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
+            opacity: 0;
+            transition: opacity 0.3s;
+            filter: blur(10px);
+            z-index: -1;
+        }
+
+        #playBtn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 40px rgba(0, 243, 255, 0.6),
+                        0 0 50px rgba(255, 0, 110, 0.4);
+        }
+
+        #playBtn:hover::before {
+            opacity: 0.8;
+        }
+
+        #playBtn:active {
+            transform: scale(0.95);
+        }
+
+        #playBtn.stop {
+            background: linear-gradient(135deg, var(--neon-pink), #ff4444);
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-left-color: white;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            position: absolute;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+        
+        .loading .spinner { display: block; }
+        .loading #btnIcon { display: none; }
+
+        @keyframes spin { 
+            100% { transform: rotate(360deg); } 
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { 
+            width: 10px; 
+        }
+        
+        ::-webkit-scrollbar-track { 
+            background: var(--bg-darker); 
+        }
+        
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(180deg, var(--neon-cyan), var(--neon-pink));
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--neon-pink), var(--neon-cyan));
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; letter-spacing: 4px; }
+            .subtitle { font-size: 0.8rem; }
+            .sector-title { font-size: 1.3rem; padding: 12px 20px; }
+            .sector-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 15px; }
+            .station-card { min-height: 120px; padding: 15px; }
+            .station-icon { font-size: 2.5rem; }
+            #player-bar { padding: 20px 15px; gap: 15px; }
+            #now-playing { font-size: 1.1rem; }
+            #playBtn { width: 60px; height: 60px; font-size: 1.5rem; }
+            .visualizer { display: none; }
+        }
+    </style>
+</head>
+<body id="app-body">
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<header>
+    <div class="logo-container">
+        <h1>CYBER RADIO</h1>
+    </div>
+    <div class="subtitle">GLOBAL FREQUENCY NETWORK</div>
+</header>
+
+<div class="content-wrapper">
+    <!-- ITALY -->
+    <div class="sector">
+        <div class="sector-title">
+            <span class="flag">🇮🇹</span>
+            <span class="text">Italy</span>
+        </div>
+        <div id="grid-italy" class="sector-grid"></div>
+    </div>
+
+    <!-- SPAIN -->
+    <div class="sector">
+        <div class="sector-title">
+            <span class="flag">🇪🇸</span>
+            <span class="text">Spain</span>
+        </div>
+        <div id="grid-spain" class="sector-grid"></div>
+    </div>
+
+    <!-- BRAZIL -->
+    <div class="sector">
+        <div class="sector-title">
+            <span class="flag">🇧🇷</span>
+            <span class="text">Brazil</span>
+        </div>
+        <div id="grid-brazil" class="sector-grid"></div>
+    </div>
+
+    <!-- USA -->
+    <div class="sector">
+        <div class="sector-title">
+            <span class="flag">🇺🇸</span>
+            <span class="text">USA</span>
+        </div>
+        <div id="grid-usa" class="sector-grid"></div>
+    </div>
+</div>
+
+<!-- PLAYER BAR -->
+<div id="player-bar">
+    <audio id="audioPlayer" preload="none" crossorigin="anonymous"></audio>
+    
+    <div class="player-info">
+        <div id="now-playing">SELECT A STATION</div>
+        <div id="player-status">
+            AWAITING SIGNAL
+            <div class="visualizer paused" id="visualizer">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="play-button-container">
+        <button id="playBtn" onclick="togglePlay()">
+            <div class="spinner"></div>
+            <span id="btnIcon">▶</span>
+        </button>
+    </div>
+</div>
+
+<script>
+    const italyStations = [
+        { name: "RTL 102.5", url: "https://icy.unitedradio.it/rtl.mp3", icon: "📻" },
+        { name: "RDS", url: "https://icy.unitedradio.it/RDS.mp3", icon: "🎵" },
+        { name: "Radio 105", url: "https://icy.unitedradio.it/Radio105.mp3", icon: "🤪" },
+        { name: "Radio Monte Carlo", url: "https://icy.unitedradio.it/RMC.mp3", icon: "🍸" },
+        { name: "Radio Italia", url: "https://icy.unitedradio.it/RadioItalia.mp3", icon: "🇮🇹" },
+        { name: "Radio 24", url: "https://shoutcast.radio24.it/radio24.mp3", icon: "💼" },
+        { name: "Radio Kiss Kiss", url: "https://ice06.fluidstream.net/KissKiss.mp3", icon: "💋" },
+        { name: "Radio Deejay", url: "https://streamcdnb3-4c4b867c89244861ac216426883d1ad0.msvdn.net/radiodeejay/radiodeejay/master_ma.m3u8", icon: "🎧" },
+        { name: "Virgin Radio", url: "https://icecast.unitedradio.it/Virgin.mp3", icon: "🤘" },
+        { name: "Radio Subasio", url: "https://icy.unitedradio.it/Subasio.mp3", icon: "❤️" }
+    ];
+
+    const spainStations = [
+        { name: "Los 40", url: "https://playerservices.streamtheworld.com/api/livestream-redirect/LOS40.mp3", icon: "🔥" },
+        { name: "Cadena SER", url: "https://playerservices.streamtheworld.com/api/livestream-redirect/CADENASER.mp3", icon: "📻" },
+        { name: "Onda Cero", url: "https://playerservices.streamtheworld.com/api/livestream-redirect/ONDACERO.mp3", icon: "🟢" },
+        { name: "Cadena 100", url: "https://cadena100-cope-rrcast.flumotion.com/cope/cadena100.mp3", icon: "💯" },
+        { name: "Europa FM", url: "https://Europa-adnstream1.nice264.com/Europa-adnstream1", icon: "🇪🇺" },
+        { name: "Rock FM", url: "https://rockfm-cope-rrcast.flumotion.com/cope/rockfm.mp3", icon: "🎸" },
+        { name: "Kiss FM", url: "https://kissfm.kissfmradio.cires21.com/kissfm.mp3", icon: "💋" },
+        { name: "RNE Radio 1", url: "https://rtvelivestream.rtve.es/rne/rne_r1_main.m3u8", icon: "📡" },
+        { name: "Dial España", url: "https://playerservices.streamtheworld.com/api/livestream-redirect/DIAL.mp3", icon: "🎶" }
+    ];
+
+    const brazilStations = [
+        { name: "Jovem Pan", url: "https://r17.ciclano.io:15045/stream", icon: "🎙️" },
+        { name: "Band FM", url: "https://8923.brasilstream.com.br/stream", icon: "🎵" },
+        { name: "Antena 1", url: "https://antenaone.crossradio.com.br/stream/1;", icon: "📻" },
+        { name: "Mix FM", url: "https://playerservices.streamtheworld.com/api/livestream-redirect/RT_MIXFMAAC.aac", icon: "🎶" },
+        { name: "Alpha FM", url: "https://playerservices.streamtheworld.com/api/livestream-redirect/ALPHAFMAAC.aac", icon: "🌟" },
+        { name: "CBN", url: "https://27863.live.streamtheworld.com/CBN_SPAAC.aac", icon: "📰" },
+        { name: "Nativa FM", url: "https://24503.live.streamtheworld.com/NATIVA_FMAAC.aac", icon: "🇧🇷" },
+        { name: "89 FM", url: "https://stream.89fm.com.br:8000/radio89.mp3", icon: "🎸" },
+        { name: "Radio Globo", url: "https://noticias.radioglobo.com.br:8443/stream", icon: "🌎" },
+        { name: "Kiss FM", url: "https://8903.brasilstream.com.br/stream", icon: "💋" }
+    ];
+
+    const usaStations = [
+        { name: "KTU 103.5", url: "https://stream.revma.ihrhls.com/zc5205", icon: "💃" },
+        { name: "Z100 NY", url: "https://stream.revma.ihrhls.com/zc181", icon: "🔥" },
+        { name: "Hot 97 NY", url: "https://stream.revma.ihrhls.com/zc5173", icon: "🎤" },
+        { name: "KEXP Seattle", url: "https://kexp-mp3-128.streamguys1.com/kexp128.mp3", icon: "🎸" },
+        { name: "WFMU Jersey", url: "https://stream0.wfmu.org/freeform-128k", icon: "📻" },
+        { name: "WNYC NY", url: "https://fm939.wnyc.org/wnycfm-web", icon: "🗽" },
+        { name: "KCRW LA", url: "https://kcrw.streamguys1.com/kcrw_192k_mp3_on_air", icon: "🌴" },
+        { name: "KUTX Austin", url: "https://streams.kut.org/4428_192.mp3", icon: "🤠" },
+        { name: "WXPN Philly", url: "https://xpnlive.streamguys1.com/xpnlive", icon: "🎵" },
+        { name: "WBGO Jazz", url: "https://wbgo.streamguys1.com/wbgo128", icon: "🎷" },
+        { name: "NPR News", url: "https://npr-ice.streamguys1.com/live.mp3", icon: "🎙️" },
+        { name: "SomaFM", url: "https://ice1.somafm.com/groovesalad-128-mp3", icon: "🌊" },
+        { name: "Radio Paradise", url: "https://stream.radioparadise.com/aac-128", icon: "🎧" }
+    ];
+
+    const audio = document.getElementById('audioPlayer');
+    const playBtn = document.getElementById('playBtn');
+    const btnIcon = document.getElementById('btnIcon');
+    const statusEl = document.getElementById('player-status');
+    const titleEl = document.getElementById('now-playing');
+    const appBody = document.getElementById('app-body');
+    const visualizer = document.getElementById('visualizer');
+    
+    let isPlaying = false;
+    let hls = null;
+    let currentUrl = "";
+    let retryTimeout = null;
+
+    function init() {
+        renderGrid(italyStations, 'grid-italy');
+        renderGrid(spainStations, 'grid-spain');
+        renderGrid(brazilStations, 'grid-brazil');
+        renderGrid(usaStations, 'grid-usa');
+    }
+
+    function renderGrid(stations, elementId) {
+        const container = document.getElementById(elementId);
+        stations.forEach((station, index) => {
+            const card = document.createElement('div');
+            card.className = 'station-card';
+            card.style.animationDelay = `${index * 0.05}s`;
+            card.innerHTML = `
+                <div class="station-icon">${station.icon}</div>
+                <div class="station-name">${station.name}</div>
+            `;
+            card.onclick = () => playStation(station, card);
+            container.appendChild(card);
+        });
+    }
+
+    function playStation(station, cardElement) {
+        if (retryTimeout) clearTimeout(retryTimeout);
+        
+        document.querySelectorAll('.station-card').forEach(c => c.classList.remove('active'));
+        cardElement.classList.add('active');
+
+        titleEl.innerText = station.name;
+        updateStatus("TUNING FREQUENCY...", "cyan");
+        setLoading(true);
+        
+        stopPlayer(); 
+        currentUrl = station.url;
+
+        if (currentUrl.includes('.m3u8')) {
+            if (Hls.isSupported()) {
+                hls = new Hls({
+                    enableWorker: true,
+                    maxBufferLength: 30,
+                    maxMaxBufferLength: 60
+                });
+                hls.loadSource(currentUrl);
+                hls.attachMedia(audio);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => attemptPlay());
+                hls.on(Hls.Events.ERROR, (e, data) => handleStreamError(data));
+            } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
+                audio.src = currentUrl;
+                attemptPlay();
+            }
+        } else {
+            audio.src = currentUrl;
+            attemptPlay();
+        }
+    }
+
+    function attemptPlay() {
+        const p = audio.play();
+        if (p !== undefined) {
+            p.then(() => {
+                isPlaying = true;
+                setLoading(false);
+                updateControls(true);
+                updateStatus("SIGNAL LOCKED", "cyan");
+                visualizer.classList.remove('paused');
+                visualizer.classList.add('playing');
+            }).catch(e => {
+                console.warn('Play error:', e);
+                setLoading(false);
+                
+                if (!retryTimeout) {
+                    updateStatus("RETRYING...", "yellow");
+                    retryTimeout = setTimeout(() => {
+                        retryTimeout = null;
+                        const p2 = audio.play();
+                        if (p2) {
+                            p2.then(() => {
+                                isPlaying = true;
+                                setLoading(false);
+                                updateControls(true);
+                                updateStatus("SIGNAL LOCKED", "cyan");
+                                visualizer.classList.remove('paused');
+                                visualizer.classList.add('playing');
+                            }).catch(() => {
+                                updateStatus("CLICK PLAY TO START", "pink");
+                                updateControls(false);
+                            });
+                        }
+                    }, 2000);
+                } else {
+                    updateStatus("CLICK PLAY TO START", "pink");
+                    updateControls(false);
+                }
+            });
+        }
+    }
+
+    function stopPlayer() {
+        audio.pause();
+        audio.src = '';
+        if (hls) { 
+            hls.destroy(); 
+            hls = null; 
+        }
+        if (retryTimeout) {
+            clearTimeout(retryTimeout);
+            retryTimeout = null;
+        }
+        isPlaying = false;
+        setLoading(false);
+        updateControls(false);
+        visualizer.classList.remove('playing');
+        visualizer.classList.add('paused');
+    }
+
+    function togglePlay() {
+        if (!currentUrl) { 
+            alert("Select a station first!"); 
+            return; 
+        }
+        
+        if (isPlaying) {
+            stopPlayer();
+            updateStatus("PAUSED", "yellow");
+        } else {
+            updateStatus("RECONNECTING...", "cyan");
+            setLoading(true);
+            
+            if (audio.src || hls) {
+                attemptPlay();
+            } else {
+                const activeCard = document.querySelector('.station-card.active');
+                if (activeCard) activeCard.click();
+            }
+        }
+    }
+
+    function updateControls(playing) {
+        if (playing) {
+            btnIcon.innerHTML = "⏹"; 
+            playBtn.classList.add('stop');
+        } else {
+            btnIcon.innerHTML = "▶"; 
+            playBtn.classList.remove('stop');
+        }
+    }
+    
+    function setLoading(isLoading) {
+        if (isLoading) {
+            appBody.classList.add('loading');
+        } else {
+            appBody.classList.remove('loading');
+        }
+    }
+
+    function updateStatus(text, color) {
+        statusEl.childNodes[0].textContent = text;
+        const colors = {
+            cyan: 'var(--neon-cyan)',
+            pink: 'var(--neon-pink)',
+            yellow: 'var(--neon-yellow)',
+            red: '#ff4444'
+        };
+        statusEl.style.color = colors[color] || colors.cyan;
+    }
+
+    function handleStreamError(data) {
+        if (data.fatal) {
+            console.error('Fatal stream error:', data);
+            setLoading(false);
+            
+            switch(data.type) {
+                case Hls.ErrorTypes.NETWORK_ERROR:
+                    updateStatus("NETWORK ERROR - RETRYING...", "yellow");
+                    if (hls && !retryTimeout) {
+                        retryTimeout = setTimeout(() => {
+                            retryTimeout = null;
+                            hls.startLoad();
+                            attemptPlay();
+                        }, 3000);
+                    }
+                    break;
+                case Hls.ErrorTypes.MEDIA_ERROR:
+                    updateStatus("MEDIA ERROR", "red");
+                    if (hls) hls.recoverMediaError();
+                    break;
+                default:
+                    updateStatus("STREAM OFFLINE", "red");
+                    break;
+            }
+        }
+    }
+
+    audio.onerror = function(e) {
+        console.error('Audio error:', e);
+        setLoading(false);
+        updateStatus("CONNECTION LOST", "red");
+        updateControls(false);
+        isPlaying = false;
+        visualizer.classList.remove('playing');
+        visualizer.classList.add('paused');
+    };
+
+    audio.onstalled = function() {
+        if (isPlaying) updateStatus("BUFFERING...", "yellow");
+    };
+
+    audio.onwaiting = function() {
+        if (isPlaying) updateStatus("BUFFERING...", "yellow");
+    };
+
+    audio.onplaying = function() {
+        if (isPlaying) {
+            updateStatus("SIGNAL LOCKED", "cyan");
+            visualizer.classList.remove('paused');
+            visualizer.classList.add('playing');
+        }
+    };
+
+    init();
+</script>
+</body>
+</html>

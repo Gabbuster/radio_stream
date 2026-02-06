@@ -1,0 +1,10 @@
+## Packages
+hls.js | Required for streaming .m3u8 HLS streams
+framer-motion | For smooth page transitions and card animations
+
+## Notes
+Tailwind Config - extend fontFamily:
+fontFamily: {
+  display: ["var(--font-display)"],
+  body: ["var(--font-body)"],
+}
